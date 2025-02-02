@@ -1,70 +1,95 @@
-import { useRouter } from "next/navigation";
-
-import { usePathname } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useMemo } from "react";
 
 interface UseUrlParamsProps {
-  label: string | number;
-  searchParams: Record<string, string>;
+  label?: string | number;
 }
 
-export default function useUrlParams({
-  label,
-  searchParams,
-}: UseUrlParamsProps) {
+type UpdateUrlParamsOptions = {
+  key: string;
+  value: string | null;
+  scroll?: boolean;
+};
+
+export default function useUrlParams({ label }: UseUrlParamsProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const labelLower = label.toString().toLowerCase();
+  const searchParams = useSearchParams();
+  const labelLower = label?.toString().toLowerCase() ?? "";
 
   const currentValues = useMemo(() => {
-    const currentValue = searchParams[labelLower] ?? "";
+    const currentValue = searchParams.get(labelLower) ?? "";
     return currentValue ? currentValue.split(",") : [];
   }, [searchParams, labelLower]);
 
-  const updateSelectionParams = useCallback(
+  const updateUrlParams = useCallback(
+    ({ key, value, scroll = false }: UpdateUrlParamsOptions) => {
+      const newSearchParams = new URLSearchParams(searchParams);
+
+      if (value === null || value === "") {
+        newSearchParams.delete(key);
+      } else {
+        newSearchParams.set(key, value);
+      }
+
+      router.push(`${pathname}?${newSearchParams.toString()}`, {
+        scroll,
+      });
+    },
+    [searchParams, router, pathname]
+  );
+
+  const updateUrlParamsForSelection = useCallback(
     (option: string | number) => {
       const optionStr = option.toString();
       const newValues = currentValues.includes(optionStr)
         ? currentValues.filter((value) => value !== optionStr)
         : [...currentValues, optionStr];
 
-      const newSearchParams = new URLSearchParams(searchParams);
-
-      if (newValues.length > 0) {
-        newSearchParams.set(labelLower, newValues.join(","));
-      } else {
-        newSearchParams.delete(labelLower);
-      }
-
-      router.push(`${pathname}?${newSearchParams.toString()}`, {
-        scroll: false,
+      updateUrlParams({
+        key: labelLower,
+        value: newValues.length > 0 ? newValues.join(",") : null,
       });
     },
-    [searchParams, router, pathname, currentValues, labelLower]
+    [currentValues, labelLower, updateUrlParams]
   );
 
-  const updateSliderParams = useCallback(
+  const updateUrlParamsForSlider = useCallback(
     (option: { min: number; selected: number }) => {
-      const newValues = option.selected;
-
-      const newSearchParams = new URLSearchParams(searchParams);
-
-      if (newValues === option.min) {
-        newSearchParams.delete(labelLower);
-      } else {
-        newSearchParams.set(labelLower, newValues.toString());
-      }
-
-      router.push(`${pathname}?${newSearchParams.toString()}`, {
-        scroll: false,
+      updateUrlParams({
+        key: labelLower,
+        value:
+          option.selected === option.min ? null : option.selected.toString(),
       });
     },
-    [searchParams, router, pathname, labelLower]
+    [labelLower, updateUrlParams]
+  );
+
+  const updateUrlParamsForSorting = useCallback(
+    (value: string) => {
+      updateUrlParams({
+        key: "sortBy",
+        value: value === "none" ? null : value,
+      });
+    },
+    [updateUrlParams]
+  );
+
+  const updateUrlParamsForSearch = useCallback(
+    (value: string) => {
+      updateUrlParams({
+        key: "search",
+        value: value || null,
+      });
+    },
+    [updateUrlParams]
   );
 
   return {
     currentValues,
-    updateSelectionParams,
-    updateSliderParams,
+    updateUrlParamsForSelection,
+    updateUrlParamsForSlider,
+    updateUrlParamsForSorting,
+    updateUrlParamsForSearch,
   };
 }

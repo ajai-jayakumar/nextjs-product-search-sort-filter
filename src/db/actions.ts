@@ -2,11 +2,19 @@
 
 import { CarsTable } from "@/db/schema";
 import { db } from "@/db";
-import { and, eq, sql, lte } from "drizzle-orm";
+import { and, eq, sql, lte, asc, desc, ilike, or } from "drizzle-orm";
+
+const SORT_OPTIONS = {
+  "price-low-to-high": asc(CarsTable.price),
+  "price-high-to-low": desc(CarsTable.price),
+  "brand-a-z": asc(CarsTable.brand),
+  "brand-z-a": desc(CarsTable.brand),
+} as const;
 
 export async function getProducts(searchParams: Record<string, string>) {
   try {
     const conditions = [];
+    const orderBy = [];
 
     if (searchParams.brand) {
       const brands = searchParams.brand.split(",");
@@ -36,13 +44,32 @@ export async function getProducts(searchParams: Record<string, string>) {
       conditions.push(lte(CarsTable.price, parseInt(searchParams.price)));
     }
 
+    if (searchParams.sortBy) {
+      orderBy.push(
+        SORT_OPTIONS[searchParams.sortBy as keyof typeof SORT_OPTIONS]
+      );
+    }
+
+    if (searchParams.search) {
+      conditions.push(
+        or(
+          ilike(CarsTable.model, `%${searchParams.search}%`),
+          ilike(CarsTable.brand, `%${searchParams.search}%`)
+        )
+      );
+    }
+
     const query =
       conditions.length > 0
         ? db
             .select()
             .from(CarsTable)
             .where(and(...conditions))
-        : db.select().from(CarsTable);
+            .orderBy(...orderBy)
+        : db
+            .select()
+            .from(CarsTable)
+            .orderBy(...orderBy);
 
     const data = await query;
     return { success: true, data };

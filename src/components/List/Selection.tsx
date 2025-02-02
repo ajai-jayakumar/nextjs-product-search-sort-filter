@@ -5,15 +5,12 @@ import useUrlParams from "./useUrlParams";
 export default function Selection({
   label,
   options,
-  searchParams,
 }: {
   label: string;
   options: (string | number)[];
-  searchParams: Record<string, string>;
 }) {
-  const { currentValues, updateSelectionParams } = useUrlParams({
+  const { currentValues, updateUrlParamsForSelection } = useUrlParams({
     label,
-    searchParams,
   });
 
   return (
@@ -24,7 +21,7 @@ export default function Selection({
             type="checkbox"
             value={option}
             id={`${option}-${index}`}
-            onChange={(e) => updateSelectionParams(e.target.value)}
+            onChange={(e) => updateUrlParamsForSelection(e.target.value)}
             aria-label={option.toString()}
             checked={currentValues.includes(option.toString())}
           />

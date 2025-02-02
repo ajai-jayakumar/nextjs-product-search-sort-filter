@@ -7,11 +7,7 @@ import {
 } from "../ui/accordion";
 import SliderComponent from "./Slider";
 import SelectionComponent from "./Selection";
-export default async function Filters({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string };
-}) {
+export default async function Filters() {
   const { data, success, error } = await getFilters();
 
   if (!success) return <div>{error}</div>;
@@ -29,17 +25,12 @@ export default async function Filters({
               </AccordionTrigger>
               <AccordionContent>
                 {Array.isArray(item.value) ? (
-                  <SelectionComponent
-                    label={item.label}
-                    options={item.value}
-                    searchParams={searchParams}
-                  />
+                  <SelectionComponent label={item.label} options={item.value} />
                 ) : (
                   <SliderComponent
                     label={item.label}
                     min={item.value.min}
                     max={item.value.max}
-                    searchParams={searchParams}
                   />
                 )}
               </AccordionContent>

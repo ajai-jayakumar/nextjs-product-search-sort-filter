@@ -7,18 +7,16 @@ import { useState, useEffect } from "react";
 export default function SliderComponent({
   min,
   max,
-  searchParams,
+
   label,
 }: {
   min: number;
   max: number;
-  searchParams: Record<string, string>;
   label: string;
 }) {
   const [sliderValue, setSliderValue] = useState(min);
-  const { currentValues, updateSliderParams } = useUrlParams({
+  const { currentValues, updateUrlParamsForSlider } = useUrlParams({
     label,
-    searchParams,
   });
 
   useEffect(() => {
@@ -45,7 +43,7 @@ export default function SliderComponent({
           step={1}
           onValueChange={handleValueChange}
           onValueCommit={(value) =>
-            updateSliderParams({ min, selected: value[0] })
+            updateUrlParamsForSlider({ min, selected: value[0] })
           }
           aria-label="slider"
         />
