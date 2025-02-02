@@ -1,9 +1,9 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useMemo } from "react";
 
-interface UseUrlParamsProps {
+type UseUrlParamsProps = {
   label?: string | number;
-}
+};
 
 type UpdateUrlParamsOptions = {
   key: string;

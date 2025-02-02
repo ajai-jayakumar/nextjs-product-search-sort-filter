@@ -11,6 +11,8 @@ const SORT_OPTIONS = {
   "brand-z-a": desc(CarsTable.brand),
 } as const;
 
+const PAGE_SIZE = 12;
+
 export async function getProducts(searchParams: Record<string, string>) {
   try {
     const conditions = [];
@@ -59,20 +61,25 @@ export async function getProducts(searchParams: Record<string, string>) {
       );
     }
 
-    const query =
-      conditions.length > 0
-        ? db
-            .select()
-            .from(CarsTable)
-            .where(and(...conditions))
-            .orderBy(...orderBy)
-        : db
-            .select()
-            .from(CarsTable)
-            .orderBy(...orderBy);
+    const page = parseInt(searchParams.page) || 1;
+
+    const query = db
+      .select()
+      .from(CarsTable)
+      .where(and(...conditions))
+      .orderBy(...orderBy)
+      .limit(PAGE_SIZE)
+      .offset((page - 1) * PAGE_SIZE);
+
+    const totalCountQuery = db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(CarsTable)
+      .where(and(...conditions));
 
     const data = await query;
-    return { success: true, data };
+    const total = await totalCountQuery;
+
+    return { success: true, data, count: total?.[0]?.count ?? 0 };
   } catch (error) {
     console.error("Error fetching products:", error);
     return { success: false, error: "Could not fetch products" };
