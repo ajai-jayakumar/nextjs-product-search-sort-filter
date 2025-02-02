@@ -1,3 +1,4 @@
+import { InferSelectModel } from "drizzle-orm";
 import {
   boolean,
   integer,
@@ -33,3 +34,5 @@ export const CarsTable = pgTable("cars", {
   accident_description: text("accident_description"),
   images: jsonb("images").notNull().default([]),
 });
+
+export type Cars = InferSelectModel<typeof CarsTable>;
