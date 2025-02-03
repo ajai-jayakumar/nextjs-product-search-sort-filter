@@ -81,8 +81,8 @@ export async function getProducts(searchParams: Record<string, string>) {
 
     return { success: true, data, count: total?.[0]?.count ?? 0 };
   } catch (error) {
-    console.error("Error fetching products:", error);
-    return { success: false, error: "Could not fetch products" };
+    console.error("Error fetching cars:", error);
+    return { success: false, error: "Could not fetch cars list" };
   }
 }
 
@@ -155,5 +155,19 @@ export async function getFilters() {
   } catch (error) {
     console.error(error);
     return { success: false, error: "Could not fetch filters" };
+  }
+}
+
+export async function getProductById(id: string) {
+  try {
+    const product = await db
+      .select()
+      .from(CarsTable)
+      .where(eq(CarsTable.id, id));
+
+    return { success: true, data: product[0] || null };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: "Could not fetch car details" };
   }
 }

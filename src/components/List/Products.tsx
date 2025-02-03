@@ -1,5 +1,5 @@
 import { getProducts } from "@/db/actions";
-
+import Link from "next/link";
 import Image from "next/image";
 import NoResultsFound from "./NoResultsFound";
 import PaginationComponent from "./Pagination";
@@ -23,29 +23,35 @@ export default async function Products({
             key={item.id}
             className="flex gap-2 mb-8 border rounded-sm flex-col"
           >
-            <div>
-              <Image
-                // TODO: Later on, we can use a placeholder image
-                src={
-                  Array.isArray(item.images)
-                    ? item.images[0] ?? ""
-                    : item.images ?? ""
-                }
-                alt={item.brand}
-                width={300}
-                height={170}
-                className="rounded-sm w-full h-full object-cover"
-              />
-            </div>
-            <div className="p-4">
-              <p className="text-xl font-bold">{`€${item.price.toLocaleString()}`}</p>
-              <p className="text-sm text-gray-500  mb-2">
-                {item.year} - {item.kilometer_count.toLocaleString()} km
-              </p>
-              <p className="text-sm font-bold text-gray-600">
-                {item.brand} - <span className="text-sm">{item.model}</span>
-              </p>
-            </div>
+            <Link href={`/product/${item.id}`}>
+              <div>
+                <Image
+                  // TODO: Later on, we can use a placeholder image
+                  src={
+                    Array.isArray(item.images)
+                      ? item.images[0] ?? ""
+                      : item.images ?? ""
+                  }
+                  alt={item.brand}
+                  width={300}
+                  height={170}
+                  className="rounded-sm w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-4">
+                <p className="text-xl font-bold">{`€${item.price.toLocaleString()}`}</p>
+                <p className="text-sm text-gray-500  mb-2">
+                  {item.condition === "Used"
+                    ? `${
+                        item.year
+                      } - ${item.kilometer_count.toLocaleString()} km`
+                    : `${item.year}`}
+                </p>
+                <p className="text-sm font-bold text-gray-600">
+                  {item.brand} - <span className="text-sm">{item.model}</span>
+                </p>
+              </div>
+            </Link>
           </div>
         ))}
       </div>
