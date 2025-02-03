@@ -47,7 +47,7 @@ export default async function ProductDetailPage({
 
   return (
     <>
-      <main className="w-full max-w-7xl mx-auto py-12 flex flex-col gap-8">
+      <main className="w-full max-w-7xl mx-auto py-12 flex flex-col gap-8 px-4 lg:px-0">
         <nav>
           <NavigateBack value="listing" />
         </nav>

@@ -15,7 +15,7 @@ export default async function Filters() {
   if (!data) return <div>No filters</div>;
 
   return (
-    <div className="p-4 border rounded-lg">
+    <div className="p-4 md:border md:rounded-lg">
       <Accordion type="multiple">
         {data.map((item) => {
           return (
