@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Prerequisites
+
+- Ensure you have the Docker Desktop application installed on your machine.
 
 ## Getting Started
 
-First, run the development server:
+Follow these steps to set up and run the application:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Start the Docker Containers**: Launch the Next.js and PostgreSQL containers by executing the following command in your terminal:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   ```bash
+   docker compose up
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+   This command initializes the Docker containers. You can stop the containers at any time by pressing `Ctrl + C` (Windows/Linux) or `Cmd + C` (Mac). Alternatively, you can manage the containers directly through the Docker Desktop application.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Run Database Migrations**: To apply the necessary database migrations, execute:
 
-## Learn More
+   ```bash
+   npm run db:migrate
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+3. **Seed the Database**: Populate the database with initial data by running:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   npm run db:seed
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. **Access the Application**: Open your web browser and navigate to [http://localhost:3000](http://localhost:3000) to view the application.
 
-## Deploy on Vercel
+5. **Optional - View the Database**: If you wish to inspect the database, you can run the following command:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```bash
+   npm run db:studio
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   This will open the database studio for easier management and visualization of your data.
