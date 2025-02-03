@@ -28,7 +28,10 @@ export default function SortComponent() {
   };
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium">
+      <DropdownMenuTrigger
+        className="flex items-center gap-1 text-sm font-medium"
+        data-testid="sort-by-button"
+      >
         sort by <ChevronDown className="w-4 h-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -38,7 +41,7 @@ export default function SortComponent() {
             onClick={() => onSortChange(option.value)}
             className={cn("", {
               "text-gray-900 bg-blue-100":
-                searchParams.get("sort") === option.value,
+                searchParams.get("sortBy") === option.value,
             })}
           >
             {option.label}
